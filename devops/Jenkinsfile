@@ -46,5 +46,13 @@ pipeline {
          }
       }
     }
+
+     stage('CI - Build image') {
+      steps {
+        script {
+          docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
+        }
+      }
+    }
   }
 }
