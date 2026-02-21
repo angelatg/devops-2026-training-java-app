@@ -18,25 +18,28 @@ pipeline {
       }
     }
 
-    stage('CI - Lint') {
-      agent {
-        docker {
-          image 'maven:3.8.6-openjdk-11-slim'
+    stage('CI - Build tools image') {
+      steps {
+        script {
+          env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
+          docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
         }
       }
+    }
+
+    stage('CI - Lint') {
       steps {
-        sh 'make lint'
+        script{
+          docker.image(env.CI_IMAGE_NAME).inside { "make lint" }
+        }
       }
     }
 
     stage('CI - Test') {
-      agent {
-        docker {
-          image 'maven:3.8.6-openjdk-11-slim'
-        }
-      }
       steps {
-        sh 'make test'
+         script{
+          docker.image(env.CI_IMAGE_NAME).inside { "make test" }
+         }
       }
     }
   }
