@@ -51,6 +51,7 @@ pipeline {
       steps {
         script {
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
+          echo "ENF.IMAGE_LOCAL: ${env.IMAGE_LOCAL}"
           docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
         }
       }
