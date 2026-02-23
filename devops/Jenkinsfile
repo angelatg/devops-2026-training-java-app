@@ -51,7 +51,8 @@ pipeline {
       steps {
         script {
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
-          echo "ENF.IMAGE_LOCAL: ${env.IMAGE_LOCAL}"
+          env.IMAGE_PRUEBA ="0.0.1-SNAPSHOT"
+          echo "ENV.IMAGE_LOCAL: ${env.IMAGE_PRUEBA}"
           docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
         }
       }
