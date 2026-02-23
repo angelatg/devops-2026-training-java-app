@@ -51,10 +51,10 @@ pipeline {
       steps {
         script {
           IMAGE_REPO_LOCAL = 'training-java-app'
-          env.IMAGE_VERSION = devopsLib.readVersion('VERSION')
+          env.IMAGE_VERSION = '0.0.1-SNAPSHOT'
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
           echo "ENV.IMAGE_LOCAL: ${env.IMAGE_LOCAL}"
-          docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
+          docker.build(env.CI_IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
     }
