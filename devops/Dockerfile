@@ -2,7 +2,7 @@
 # Build stage
 #
 FROM maven:3.8.6-openjdk-11-slim as build
-ARG VERSION=0.0.1-SNAPSHOT
+ARG VERSION=1.0.4-SNAPSHOT
 
 COPY ./src /home/app/src
 COPY ./pom.xml /home/app

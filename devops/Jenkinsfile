@@ -50,10 +50,9 @@ pipeline {
      stage('CI - Build image') {
       steps {
         script {
-          IMAGE_REPO_LOCAL = 'training-java-app'
-          env.IMAGE_VERSION = '0.0.1-SNAPSHOT'
+          env.IMAGE_REPO_LOCAL = 'spring-boot-2-hello-world'
+          env.IMAGE_VERSION = '1.0.4-SNAPSHOT'
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
-          echo "ENV.IMAGE_LOCAL: ${env.IMAGE_LOCAL}"
           docker.build(env.CI_IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
