@@ -22,6 +22,6 @@ RUN mvn install
 # Package stage
 #
 FROM eclipse-temurin:11-jre-jammy
-ARG VERSION=0.0.1-SNAPSHOT
+ARG VERSION=0.0.4-SNAPSHOT
 COPY --from=build /home/app/target/spring-boot-2-hello-world-${VERSION}.jar /usr/local/lib/app.jar
 ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
