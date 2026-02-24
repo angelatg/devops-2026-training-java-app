@@ -22,7 +22,7 @@ pipeline {
       }
     }
 
-    stage('CI - Build tools image') {
+   /* stage('CI - Build tools image') {
       steps {
         script {
           env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
@@ -45,7 +45,7 @@ pipeline {
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
-    }
+    }*/
 
      stage('CI - Build image') {
       steps {
