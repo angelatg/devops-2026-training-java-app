@@ -65,7 +65,7 @@ pipeline {
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
-    }*/
+    }
 
      // =========================
      // Ejercicio 5 (docker build)
