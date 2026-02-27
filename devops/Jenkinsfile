@@ -80,6 +80,8 @@ pipeline {
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
           docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         */
+        env.IMAGE_VERSION = devopsLib.readVersion('VERSION')
+        env.IMAGE_NAME = "${env.IMAGE_REPO}:${env.IMAGE_VERSION}"
         docker.build(env.IMAGE_NAME, "--build-arg VERSION=0.0.1 -f devops/Dockerfile .")
         }
       }
