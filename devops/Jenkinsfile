@@ -6,31 +6,49 @@
   hasta construir un pipeline CI/CD completo.
 */
 
+// =========================
+// Ejercicio 4 (Groovy): función reutilizable
+// =========================
 def runInDocker(String image, Closure body) {
+  // TODO (E4): Ejecuta `body()` dentro del contenedor indicado usando Docker Pipeline:
+  // docker.image(image).inside { body() }
   docker.image(image).inside { body() }
 }
 
 pipeline {
-  // `agent any` = el pipeline se ejecuta en cualquier nodo/agente disponible.
   agent any
 
+  // =========================
+  // Ejercicio 1 (estructura básica)
+  // =========================
   stages {
     stage('Info') {
       steps {
+        // TODO (E1): imprime JOB_NAME y BUILD_NUMBER
         echo "Job: ${env.JOB_NAME}"
         echo "Build: ${env.BUILD_NUMBER}"
       }
     }
 
-   /* stage('CI - Build tools image') {
+    // =========================
+    // Ejercicio 3 (preparación): construir imagen CI con make
+    // =========================
+    stage('CI - Build tools image') {
       steps {
         script {
+          // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
+          // Ejemplo:
+          // env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
+          // docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
           env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
           docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
         }
       }
     }
 
+    // =========================
+    // Ejercicio 3 (lint/test con Makefile) + Ejercicio 4 (refactor con runInDocker)
+    // =========================
     stage('CI - Lint') {
       steps {
         script{
@@ -42,23 +60,32 @@ pipeline {
     stage('CI - Test') {
       steps {
          script{
+          // TODO (E3/E4): Ejecuta `make lint` dentro de la imagen CI construida.
+          // runInDocker(env.CI_IMAGE_NAME) { sh 'make lint' }
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
     }*/
 
+     // =========================
+     // Ejercicio 5 (docker build)
+     // =========================
      stage('CI - Build image') {
       steps {
         script {
-          env.IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
+          // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
+          // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
+          /*env.IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
           env.IMAGE_VERSION = '0.0.2'
           env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
           docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
+        */
+        docker.build(env.IMAGE_NAME, "--build-arg VERSION="0.0.1" -f devops/Dockerfile .")
         }
       }
     }
 
-    stage('CD') {
+    /*stage('CD') {
       //when {
       //  allOf {
       //    anyOf {
@@ -78,7 +105,7 @@ pipeline {
           //sh 'curl http://localhost:8084/hello'
           //sh 'docker compose down --volumes'
         }
-      }
+      }*/
       //post {
         // =========================
         // Ejercicio 6.5 (hooks post)
