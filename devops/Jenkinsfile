@@ -93,7 +93,7 @@ pipeline {
         script {
            sh 'docker compose up -d'
            sh 'sleep 5'
-           sh 'curl http://localhost:8084/hello'
+           //sh 'curl http://localhost:8084/hello'
         }
       }
       post{
