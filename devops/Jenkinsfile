@@ -96,6 +96,7 @@ pipeline {
            sh 'pwd'
            sh 'ls -al'
            sh ' docker compose exec app bash'
+           sh 'ls -al'
            sh 'sleep 5'
            sh 'curl http://localhost:8089/hello'
         }
