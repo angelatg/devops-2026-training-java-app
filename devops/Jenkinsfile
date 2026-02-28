@@ -92,7 +92,7 @@ pipeline {
       steps {
         script {
            sh 'docker compose up -d'
-           echo 'docker compose ps -all'
+           sh 'docker compose ps -all'
            sh 'sleep 5'
            sh 'curl http://localhost:8084/hello'
         }
