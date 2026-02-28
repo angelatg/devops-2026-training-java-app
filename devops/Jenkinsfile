@@ -33,7 +33,7 @@ pipeline {
     // =========================
     // Ejercicio 3 (preparación): construir imagen CI con make
     // =========================
-    stage('CI - Build tools image') {
+    /*stage('CI - Build tools image') {
       steps {
         script {
           // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
@@ -75,26 +75,30 @@ pipeline {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
-          /*env.IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
-          env.IMAGE_VERSION = '0.0.2'
-          env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
-          docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
-        */
+         //env.IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'   
+         // env.IMAGE_VERSION = '0.0.2'
+          //env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
+         // docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
+        
         //env.IMAGE_VERSION = devopsLib.readVersion('VERSION')
         env.IMAGE_VERSION = "0.0.1"
         env.IMAGE_NAME = "devops_training_java_app"
         docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
-    }
+    }*/
 
      stage('CD') {
       steps {
         script {
            sh 'docker compose up -d'
            sh 'sleep 5'
-          //sh 'curl http://localhost:8084/hello'
-          //sh 'docker compose down --volumes'
+           sh 'curl http://localhost:8084/hello'
+        }
+      }
+      post{
+        always {
+           sh 'docker compose down --volumes'
         }
       }
      }
