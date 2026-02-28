@@ -25,4 +25,3 @@ FROM eclipse-temurin:11-jre-jammy
 ARG VERSION=1.0.4-SNAPSHOT
 COPY --from=build /home/app/target/spring-boot-2-hello-world-${VERSION}.jar /usr/local/lib/app.jar
 ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
-CMD ["Hola MUNDOOOOOOOOO !!!!!!"]
