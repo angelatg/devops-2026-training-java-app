@@ -101,11 +101,11 @@ pipeline {
            sh 'curl http://localhost:8089/hello'
         }
       }
-      post{
+      /*post{
         always {
            sh 'docker compose down --volumes'
         }
-      }
+      }*/
      }
 
     /*stage('CD') {
