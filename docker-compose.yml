@@ -20,6 +20,7 @@ services:
       context: .
       dockerfile: devops/Dockerfile
     container_name: java_app
+    entrypoint: java -jar /usr/local/lib/app.jar
     ports:
       - 8084:8081
 
