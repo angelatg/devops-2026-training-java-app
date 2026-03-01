@@ -21,9 +21,7 @@ services:
       dockerfile: devops/Dockerfile
     container_name: java_app
     ports:
-      - 8089:8089
-    networks:
-      - java-project-net
+      - 8084:8080
 
   # sonarqube:
   #   image: sonarqube:9.9.0-community

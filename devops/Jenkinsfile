@@ -98,7 +98,8 @@ pipeline {
            sh ' docker compose exec app sh'
            sh 'ls -al'
            sh 'sleep 5'
-           sh 'curl http://127.0.0.1:8089/hello'
+           sh 'docker compose -p logs app'
+           sh 'curl http://localhost:8084/hello'
         }
       }
       /*post{
