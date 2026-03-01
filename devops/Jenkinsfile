@@ -95,7 +95,7 @@ pipeline {
            sh 'sleep 5'
            sh 'docker ps'
            sh 'docker compose logs'
-           sh 'curl http://localhost:8084/hello'
+           sh 'curl app://localhost:8084/hello'
 
         }
       }
