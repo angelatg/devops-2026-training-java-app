@@ -97,12 +97,13 @@ pipeline {
         }
       }
       post{
-        always {
-           sh 'docker compose down --volumes'
-        }
         failure {
           sh 'docker compose logs'
         }
+        always {
+           sh 'docker compose down --volumes'
+        }
+        
       }
      }
 
