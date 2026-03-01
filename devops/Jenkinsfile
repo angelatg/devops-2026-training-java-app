@@ -33,7 +33,7 @@ pipeline {
     // =========================
     // Ejercicio 3 (preparación): construir imagen CI con make
     // =========================
-    /*stage('CI - Build tools image') {
+    stage('CI - Build tools image') {
       steps {
         script {
           // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
@@ -86,27 +86,24 @@ pipeline {
         docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
-    }*/
+    }
 
      stage('CD') {
       steps {
         script {
            sh 'docker compose up -d'
-           sh 'docker ps -all'
-           sh 'pwd'
-           sh 'ls -al'
-           sh ' docker compose exec app sh'
-           sh 'ls -al'
            sh 'sleep 5'
-           sh 'docker compose -p app logs '
            sh 'curl http://localhost:8084/hello'
         }
       }
-      /*post{
+      post{
         always {
            sh 'docker compose down --volumes'
         }
-      }*/
+        failure {
+          sh 'docker compose logs'
+        }
+      }
      }
 
     /*stage('CD') {
