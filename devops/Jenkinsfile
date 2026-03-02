@@ -97,7 +97,7 @@ pipeline {
            sh 'docker compose logs'
            try{
             sh 'curl app://localhost:8084/hello'
-           catch(error){
+           }catch(error){
               sh "echo ${error}"
               currentBuild.result = 'SUCCESS'
            }
