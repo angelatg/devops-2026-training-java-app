@@ -120,6 +120,8 @@ pipeline {
               sh "echo ERROR:${error}"
               currentBuild.result = 'SUCCESS'
            }
+           env.DEPLOY_ENV = (env.BRANCH_NAME == 'master') ? 'PRO' : 'DEV'
+           echo "Deploying to ${env.DEPLOY_ENV}"
         }
       }
       post{
