@@ -23,7 +23,7 @@ pipeline {
   // =========================
   parameters {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
-    booleanParam(name: 'RUN_CD', defaultValue: true, description: 'Ejecutar CD (solo develop/master)')
+    booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
   }
 
   // =========================
