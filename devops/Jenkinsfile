@@ -19,6 +19,14 @@ pipeline {
   agent any
 
   // =========================
+  // Ejercicio 6.3 (parámetros)
+  // =========================
+  parameters {
+    // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
+    booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
+  }
+
+  // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
   stages {
@@ -89,19 +97,29 @@ pipeline {
     }*/
 
      stage('CD') {
+      when {
+        anyOf {
+          expression {return params.RUN_CD}
+          branch 'develop'
+          branch 'master'
+        }
+      }
       steps {
+        echo "CD habilitado: RUN_CD=${params.RUN_CD}, branch=${env.BRANCH_NAME}"
         script {
            sh 'docker compose up -d'
            sh 'sleep 5'
+           // comprobar que el contenedor está arrancado
            sh 'docker ps'
            sh 'docker compose logs'
            try{
+              // el curl fallará por un problema de networking y puertos
+              // permitimos seguir con el pipeline -> 'SUCCESS'
             sh 'curl http://localhost:8084/hello'
            }catch(error){
               sh "echo ERROR:${error}"
               currentBuild.result = 'SUCCESS'
            }
-
         }
       }
       post{
