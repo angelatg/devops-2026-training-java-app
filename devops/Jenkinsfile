@@ -21,10 +21,10 @@ pipeline {
   // =========================
   // Ejercicio 6.3 (parámetros)
   // =========================
-  parameters {
+  /*parameters {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
-  }
+  }*/
 
   // =========================
   // Ejercicio 1 (estructura básica)
@@ -107,21 +107,19 @@ pipeline {
       steps {
         echo "CD habilitado: RUN_CD=${params.RUN_CD}, branch=${env.BRANCH_NAME}"
         script {
-          def branch_name = env.BRANCH_NAME
-          if (branch_name=='develop'){
-            sh 'docker compose -p dev up -d' 
-          }else if (branch_name=='master'){
-            sh 'docker compose -p pro up -d'
-          }
-           
+           // [E6.2] TODO: calcular DEPLOY_ENV y COMPOSE_PROJECT.
+           env.DEPLOY_ENV = (env.BRANCH_NAME == 'master') ? 'PRO' : 'DEV'
+           env.COMPOSE_PROJECT = env.DEPLOY_ENV.toLowerCase()
+          
+           sh "docker compose -p ${env.COMPOSE_PROJECT} up -d" 
+          
            sh 'sleep 5'
+          
            // comprobar que el contenedor está arrancado
            sh 'docker ps'
-           if (branch_name=='develop'){
-             sh 'docker compose -p dev logs'
-           }else if (branch_name=='master'){
-             sh 'docker compose -p pro logs'
-           }
+           
+           sh "docker compose -p ${env.COMPOSE_PROJECT} logs"
+           
            try{
               // el curl fallará por un problema de networking y puertos
               // permitimos seguir con el pipeline -> 'SUCCESS'
@@ -130,8 +128,8 @@ pipeline {
               sh "echo ERROR:${error}"
               currentBuild.result = 'SUCCESS'
            }
-           env.DEPLOY_ENV = (env.BRANCH_NAME == 'master') ? 'PRO' : 'DEV'
-           echo "Deploying to ${env.DEPLOY_ENV}"
+
+          echo "Deploying to ${env.DEPLOY_ENV}"
         }
       }
       post{
