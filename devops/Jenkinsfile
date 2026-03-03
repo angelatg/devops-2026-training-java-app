@@ -41,7 +41,7 @@ pipeline {
     // =========================
     // Ejercicio 3 (preparación): construir imagen CI con make
     // =========================
-    /*stage('CI - Build tools image') {
+    stage('CI - Build tools image') {
       steps {
         script {
           // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
@@ -94,7 +94,7 @@ pipeline {
         docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
-    }*/
+    }
 
      stage('CD') {
       when {
@@ -131,5 +131,6 @@ pipeline {
         
       }
      }
+    
   }
 }
