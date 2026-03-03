@@ -15,7 +15,7 @@ networks:
 services:
   ## TO BUILD AND RUN APP LOCALLY
   app:
-    #image: scalian_training-java-hello-world:0.0.2
+    image: scalian_training-java-hello-world:0.0.2
     build: 
       context: .
       dockerfile: devops/Dockerfile
