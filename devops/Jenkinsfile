@@ -129,7 +129,7 @@ pipeline {
       }
       post{
         always {
-           sh 'docker compose down --volumes'
+           sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes"
         }
         
       }
