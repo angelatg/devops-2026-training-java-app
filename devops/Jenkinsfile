@@ -107,7 +107,7 @@ pipeline {
       steps {
         echo "CD habilitado: RUN_CD=${params.RUN_CD}, branch=${env.BRANCH_NAME}"
         script {
-          def branch_name = $env.BRANCH_NAME
+          def branch_name = ${env.BRANCH_NAME}
           if (branch_name=='develop'){
             sh 'docker compose -p dev up -d' 
           }else if (branch_name=='master'){
