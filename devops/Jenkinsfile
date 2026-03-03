@@ -21,10 +21,10 @@ pipeline {
   // =========================
   // Ejercicio 6.3 (parámetros)
   // =========================
-  /*parameters {
+  parameters {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
-  }*/
+  }
 
   // =========================
   // Ejercicio 1 (estructura básica)
@@ -83,15 +83,9 @@ pipeline {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
-         //env.IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'   
-         // env.IMAGE_VERSION = '0.0.2'
-          //env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
-         // docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
-        
-        //env.IMAGE_VERSION = devopsLib.readVersion('VERSION')
-        env.IMAGE_VERSION = "0.0.1"
-        env.IMAGE_NAME = "devops_training_java_app"
-        docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
+          env.IMAGE_VERSION = "0.0.1"
+          env.IMAGE_NAME = "devops_training_java_app"
+          docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
     }
@@ -123,7 +117,8 @@ pipeline {
            try{
               // el curl fallará por un problema de networking y puertos
               // permitimos seguir con el pipeline -> 'SUCCESS'
-            sh 'curl http://localhost:8084/hello'
+              sh 'curl http://localhost:8084/hello'
+
            }catch(error){
               sh "echo ERROR:${error}"
               currentBuild.result = 'SUCCESS'
