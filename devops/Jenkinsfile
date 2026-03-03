@@ -117,7 +117,11 @@ pipeline {
            sh 'sleep 5'
            // comprobar que el contenedor está arrancado
            sh 'docker ps'
-           sh 'docker compose logs'
+           if (branch_name=='develop'){
+             sh 'docker compose -p dev logs'
+           }else if (branch_name=='master'){
+             sh 'docker compose -p pro logs'
+           }
            try{
               // el curl fallará por un problema de networking y puertos
               // permitimos seguir con el pipeline -> 'SUCCESS'
