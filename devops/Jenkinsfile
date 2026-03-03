@@ -131,43 +131,5 @@ pipeline {
         
       }
      }
-
-    /*stage('CD') {
-      //when {
-      //  allOf {
-      //    anyOf {
-      //      branch 'develop'
-      //      branch 'master'
-      //    }
-          // TODO (E6.3): Solo ejecutar CD si RUN_CD es true
-      //  }
-      //}
-      steps {
-        script {
-          // TODO (E6.2): Define DEPLOY_ENV (develop=DEV, master=PRO) y muestra logs.
-          // TODO (E6): docker compose up -> logs -> docker compose down --volumes
-          // Recomendado: encapsular con composeUpTestDown(...) (E9).
-          sh 'docker compose up -d'
-          sh 'sleep 5'
-          //sh 'curl http://localhost:8084/hello'
-          //sh 'docker compose down --volumes'
-        }
-      }
-      //post {
-        // =========================
-        // Ejercicio 6.5 (hooks post)
-        // =========================
-      //  always {
-          // TODO (E6.5): Limpieza garantizada
-      //  }
-      //  success {
-          // TODO (E6.5): SUCCESS
-      //  }
-      //  failure {
-          // TODO (E6.5): FAILURE + logs
-       // }
-      //}
-    }*/
-
   }
 }
