@@ -26,6 +26,25 @@ pipeline {
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
   }
 
+
+  // =========================
+  // Ejercicio 6.4 (variables de entorno)
+  // =========================
+  environment {
+    // TODO (E6.4): Define variables reutilizables:
+    // - IMAGE_NAME (tag para docker build)
+    // - IMAGE_VERSION (versión para docker build)
+    // - APP_URL (endpoint para e2e)
+    // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
+      
+    IMAGE_NAME = 'devops_training_java_app'
+    IMAGE_VERSION = '0.0.1'
+    APP_URL = 'http://localhost:8084/hello'
+    CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
+  }
+
+
+
   // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
@@ -48,7 +67,6 @@ pipeline {
           // Ejemplo:
           // env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
           // docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
-          env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
           docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
         }
       }
@@ -83,8 +101,7 @@ pipeline {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
-          env.IMAGE_VERSION = "0.0.1"
-          env.IMAGE_NAME = "devops_training_java_app"
+      
           docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
         }
       }
@@ -117,7 +134,7 @@ pipeline {
            try{
               // el curl fallará por un problema de networking y puertos
               // permitimos seguir con el pipeline -> 'SUCCESS'
-              sh 'curl http://localhost:8084/hello'
+              sh "curl ${env.APP_URL}"
 
            }catch(error){
               sh "echo ERROR:${error}"
