@@ -145,12 +145,23 @@ pipeline {
         }
       }
       post{
+        // =========================
+        // Ejercicio 6.5 (hooks post)
+        // =========================
         always {
-           sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes"
+          // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
+           sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
+           sh 'docker rmi IMAGE_NAME || true'
+        }
+        success {
+          echo 'SUCCESS'
+        }
+        failure {
+          echo 'FAILURE'
+          sh "docker compose -p ${env.COMPOSE_PROJECT} logs || true"
         }
         
       }
      }
-    
   }
 }
