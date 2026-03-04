@@ -142,7 +142,7 @@ pipeline {
            }
 
           echo "Deploying to ${env.DEPLOY_ENV}"
-          echo "nombre imagen: $docker_image"
+          echo "nombre imagen: ${docker_image}"
         }
       }
       post{
