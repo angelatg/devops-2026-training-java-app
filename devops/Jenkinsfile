@@ -151,7 +151,7 @@ pipeline {
         always {
           // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
-           sh 'docker rmi IMAGE_NAME || true'
+           sh "docker rmi ${env.IMAGE_NAME} || true"
         }
         success {
           echo 'SUCCESS'
