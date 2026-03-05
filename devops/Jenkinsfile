@@ -102,7 +102,7 @@ pipeline {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
       
-          docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
+          docker.build(env.IMAGE_NAME, "--build-arg VERSION=0.0.1 -f devops/Dockerfile .")
         }
       }
     }
