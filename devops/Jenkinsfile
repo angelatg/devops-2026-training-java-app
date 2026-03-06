@@ -37,8 +37,9 @@ pipeline {
     // - APP_URL (endpoint para e2e)
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
       
-    IMAGE_NAME = 'devops_training_java_app:0.0.1'
-    IMAGE_VERSION = '0.0.1'
+    IMAGE_VERSION = '0.0.1' 
+    IMAGE_REPO = 'devops_training_java_app' 
+    IMAGE_NAME = '$IMAGE_REPO:$IMAGE_VERSION'
     APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
   }
