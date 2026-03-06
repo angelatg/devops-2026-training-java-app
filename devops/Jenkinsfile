@@ -167,7 +167,7 @@ pipeline {
   }
   post{
     always{
-      sh "docker rmi ${env.IMAGE_NAME} || true"
+      sh "docker rmi ${env.CI_IMAGE_NAME} || true"
     }
   }
 }
