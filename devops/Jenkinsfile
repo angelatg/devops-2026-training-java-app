@@ -104,7 +104,7 @@ pipeline {
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
       
           //docker.build(env.IMAGE_NAME, '--build-arg VERSION=$IMAGE_VERSION -f devops/Dockerfile .')
-          sh "echo NOMBRE:${env.IMAGE_NAME}""
+          sh "echo NOMBRE:${env.IMAGE_NAME}"
           docker.build(env.IMAGE_NAME, ' -f devops/Dockerfile .')
         }
       }
