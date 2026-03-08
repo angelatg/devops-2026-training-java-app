@@ -42,6 +42,7 @@ pipeline {
     IMAGE_NAME = "${IMAGE_REPO}:${IMAGE_VERSION}"
     APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
+    VERSION_JAR = '0.0.8-SNAPSHOT'
   }
 
 
@@ -103,7 +104,7 @@ pipeline {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
    
-          docker.build(env.IMAGE_NAME, ' -f devops/Dockerfile .')
+          docker.build(env.IMAGE_NAME, " --build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .')
         }
       }
     }
