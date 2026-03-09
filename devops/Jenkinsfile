@@ -55,6 +55,8 @@ pipeline {
     REGISTRY_HOST = 'local-registry:5000'
     REGISTRY_REPO = 'scalian_training-java-hello-world'
     REGISTRY_CREDS_ID = 'local-registry-creds'
+    TAG_NAME="1.0.4-SNAPSHOT"
+    IMAGE_REGISTRY = "${REGISTRY_HOST}/${REGISTRY_REPO}:${TAG_NAME}"
 
   }
 
@@ -63,7 +65,7 @@ pipeline {
   // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
-  stages {
+ /* stages {
     stage('Info') {
       steps {
         // TODO (E1): imprime JOB_NAME y BUILD_NUMBER
@@ -105,7 +107,7 @@ pipeline {
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
-    }
+    }*/
 
      // =========================
      // Ejercicio 5 (docker build)
@@ -142,11 +144,14 @@ pipeline {
           //   '''
           // }
 
-          withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "myuser", passwordVariable: "mypassword")]) {
+          withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "REG_USER", passwordVariable: "REG_PASS")]) {
              sh '''
-               echo "USUARIO: "${myuser}
-               echo "PASSWORD: "${mypassword}
+                echo "$REG_PASS" | docker login -u ${REG_USER} --password-stdin
+                docker tag "$IMAGE_LOCAL" "$IMAGE_REGISTRY"
+                docker push "$IMAGE_REGISTRY"
              '''
+             // Comprobar los repositorios publicados
+             echo "curl -s http://localhost:5000/v2/_catalog"
            }
         }
       }
@@ -199,6 +204,7 @@ pipeline {
         always {
           // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
+          
            // nombre de imagen en docker-compose-yml
            sh "docker rmi scalian_training-java-hello-world:0.0.2 || true"
         }
