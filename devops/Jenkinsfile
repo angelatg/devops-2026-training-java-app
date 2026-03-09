@@ -11,7 +11,6 @@
 // =========================
 def runInDocker(String image, Closure body) {
   // TODO (E4): Ejecuta `body()` dentro del contenedor indicado usando Docker Pipeline:
-  // docker.image(image).inside { body() }
   docker.image(image).inside { body() }
 }
 
@@ -24,6 +23,12 @@ pipeline {
   parameters {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
+
+     // [E7] TODO: añade parámetro para push al registry.
+    // booleanParam(name: 'ENABLE_REGISTRY_PUSH', defaultValue: false, description: 'Publicar imagen en local-registry')
+
+    // [E7/E12] TODO: añade parámetro para forzar uso de imagen del registry en CD.
+    // booleanParam(name: 'USE_REGISTRY_IMAGE_IN_CD', defaultValue: true, description: 'Usar imagen del registry en CD')
   }
 
 
@@ -36,13 +41,21 @@ pipeline {
     // - IMAGE_VERSION (versión para docker build)
     // - APP_URL (endpoint para e2e)
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
-      
+   
     IMAGE_VERSION = '0.0.1' 
     IMAGE_REPO = 'devops_training_java_app' 
     IMAGE_NAME = "${IMAGE_REPO}:${IMAGE_VERSION}"
     APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
     VERSION_JAR = '1.0.8-SNAPSHOT'
+
+    // - (opcional E7) REGISTRY y REGISTRY_CREDS_ID
+    // [E7] TODO: define host/repo de registry y credencial Jenkins.
+    
+    REGISTRY_HOST = 'local-registry:5000'
+    REGISTRY_REPO = 'scalian_training-java-hello-world'
+    REGISTRY_CREDS_ID = 'local-registry-creds'
+
   }
 
 
@@ -89,7 +102,6 @@ pipeline {
       steps {
          script{
           // TODO (E3/E4): Ejecuta `make lint` dentro de la imagen CI construida.
-          // runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
@@ -102,13 +114,47 @@ pipeline {
       steps {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
-          // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
-   
           docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .")
         }
       }
     }
 
+
+    // =========================
+    // Ejercicio 7 (opcional): push a registry privado
+    // =========================
+    stage('CI - Push image (opcional)') {
+      when {
+        // [E7] TODO: ejecuta solo si se habilita el parámetro.
+        // TODO (E7): Ejecuta solo si has añadido un parámetro tipo ENABLE_REGISTRY_PUSH
+        expression { return params.ENABLE_REGISTRY_PUSH }
+      }
+      steps {
+        script {
+          // TODO (E7): Taggea y pushea la imagen a local-registry:5000 usando credenciales Jenkins.
+          // [E7] TODO: login + tag + push al registry.
+          // Ejemplo:
+          // withCredentials([usernamePassword(...)]) {
+          //   sh '''
+          //     echo "$REG_PASS" | docker login ...
+          //     docker tag "$IMAGE_LOCAL" "$IMAGE_REGISTRY"
+          //     docker push "$IMAGE_REGISTRY"
+          //   '''
+          // }
+
+          withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "myuser", passwordVariable: "mypassword")]) {
+             sh '''
+               echo "USUARIO: "${myuser}
+               echo "PASSWORD: "${mypassword}
+             '''
+           }
+        }
+      }
+    }
+
+    // =========================
+    // Ejercicio 6 (compose) + Ejercicio 6.1 (solo develop/master) + Ejercicio 6.3 (RUN_CD)
+    // =========================
      stage('CD') {
       when {
         anyOf {
