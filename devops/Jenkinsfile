@@ -42,7 +42,7 @@ pipeline {
     IMAGE_NAME = "${IMAGE_REPO}:${IMAGE_VERSION}"
     APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
-    VERSION_JAR = '0.0.8-SNAPSHOT'
+    VERSION_JAR = '1.0.8-SNAPSHOT'
   }
 
 
