@@ -65,7 +65,7 @@ pipeline {
   // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
- /* stages {
+  stages {  /*
     stage('Info') {
       steps {
         // TODO (E1): imprime JOB_NAME y BUILD_NUMBER
