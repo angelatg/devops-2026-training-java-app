@@ -24,8 +24,8 @@ pipeline {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
 
-     // [E7] TODO: añade parámetro para push al registry.
-    // booleanParam(name: 'ENABLE_REGISTRY_PUSH', defaultValue: false, description: 'Publicar imagen en local-registry')
+    // [E7] TODO: añade parámetro para push al registry.
+    booleanParam(name: 'ENABLE_REGISTRY_PUSH', defaultValue: false, description: 'Publicar imagen en local-registry')
 
     // [E7/E12] TODO: añade parámetro para forzar uso de imagen del registry en CD.
     // booleanParam(name: 'USE_REGISTRY_IMAGE_IN_CD', defaultValue: true, description: 'Usar imagen del registry en CD')
