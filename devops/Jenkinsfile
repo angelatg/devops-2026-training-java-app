@@ -104,7 +104,7 @@ pipeline {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
           // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
    
-          docker.build(env.IMAGE_NAME, ' -f devops/Dockerfile .')
+          docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .")
         }
       }
     }
@@ -153,7 +153,8 @@ pipeline {
         always {
           // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
-           sh "docker rmi ${env.IMAGE_NAME} || true"
+           // nombre de imagen en docker-compose-yml
+           sh "docker rmi scalian_training-java-hello-world:0.0.2 || true"
         }
         success {
           echo 'SUCCESS'
@@ -168,6 +169,9 @@ pipeline {
   }
   post{
     always{
+      //borrar imagen de docker build
+      sh "docker rmi ${env.IMAGE_NAME} || true" 
+      // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
     }
   }
