@@ -220,8 +220,7 @@ pipeline {
           echo 'FAILURE'
           sh "docker compose -p ${env.COMPOSE_PROJECT} logs || true"
         }
-        
-      }
+       }
      }
   }
   post{
@@ -233,7 +232,7 @@ pipeline {
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
 
       // borrar imagen tageada para subir al registro
-      sh "docker rmi ${env.IMAGE_REGISTRY} || true"
+      sh "docker rmi ${IMAGE_REGISTRY} || true"
     }
   }
 }
