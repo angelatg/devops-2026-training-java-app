@@ -151,7 +151,7 @@ pipeline {
                 docker push ${IMAGE_REGISTRY}
 
                 # Comprobar los repositorios publicados
-                curl -s http://localhost:5000/v2/_catalog"
+                curl -s http://localhost:5000/v2/_catalog
 
                 # Comprobar tags de imagen
                 curl -s http://localhost:5000/v2/${env.IMAGE_LOCAL}/tags/list
