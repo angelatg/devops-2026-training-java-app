@@ -43,10 +43,8 @@ pipeline {
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
    
     IMAGE_VERSION = '0.0.2' 
-    IMAGE_REPO = 'devops_training_java_app' 
-    IMAGE_NAME = "${IMAGE_REPO}:${IMAGE_VERSION}"
-    APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
+    APP_URL = 'http://localhost:8084/hello'
     VERSION_JAR = "${env.IMAGE_VERSION}-SNAPSHOT"
    
     // [E5] TODO: define repositorio local de imagen.
@@ -55,7 +53,6 @@ pipeline {
 
     // - (opcional E7) REGISTRY y REGISTRY_CREDS_ID
     // [E7] TODO: define host/repo de registry y credencial Jenkins.
-    
     REGISTRY_HOST = 'local-registry:5000'
     REGISTRY_REPO = 'scalian_training-java-hello-world'
     REGISTRY_CREDS_ID = 'local-registry-creds'
@@ -68,7 +65,7 @@ pipeline {
   // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
-  stages {  /*
+  stages {  
     stage('Info') {
       steps {
         // TODO (E1): imprime JOB_NAME y BUILD_NUMBER
@@ -110,7 +107,7 @@ pipeline {
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
-    }*/
+    }
 
      // =========================
      // Ejercicio 5 (docker build)
@@ -119,7 +116,7 @@ pipeline {
       steps {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
-          docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .")
+          docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .")
         }
       }
     }
@@ -225,7 +222,8 @@ pipeline {
   post{
     always{
       //borrar imagen de docker build
-      sh "docker rmi ${env.IMAGE_NAME} || true" 
+      sh "docker rmi ${env.IMAGE_LOCAL} || true" 
+     
       // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
     }
