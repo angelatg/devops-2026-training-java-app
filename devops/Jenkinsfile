@@ -146,6 +146,8 @@ pipeline {
 
           withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "REG_USER", passwordVariable: "REG_PASS")]) {
              sh '''
+                echo ${REG_USER}
+                echo ${REG_PASS}
                 echo "$REG_PASS" | docker login -u ${REG_USER} --password-stdin
                 docker tag "$IMAGE_LOCAL" "$IMAGE_REGISTRY"
                 docker push "$IMAGE_REGISTRY"
