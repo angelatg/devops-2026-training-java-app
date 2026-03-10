@@ -42,7 +42,7 @@ pipeline {
     // - APP_URL (endpoint para e2e)
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
    
-    IMAGE_VERSION = '0.0.2' 
+    IMAGE_VERSION = '0.0.3' 
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
     APP_URL = 'http://localhost:8084/hello'
     VERSION_JAR = "${env.IMAGE_VERSION}-SNAPSHOT"
@@ -154,7 +154,7 @@ pipeline {
                 curl -s http://localhost:5000/v2/_catalog
 
                 # Comprobar tags de imagen
-                curl -s http://localhost:5000/v2/${env.IMAGE_LOCAL}/tags/list
+                curl -s http://localhost:5000/v2/${env.IMAGE_REPO_LOCAL}/tags/list
 
                 # Validación final de comsumo
                 docker pull localhost:5000/${env.IMAGE_LOCAL}
