@@ -42,12 +42,16 @@ pipeline {
     // - APP_URL (endpoint para e2e)
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
    
-    IMAGE_VERSION = '0.0.1' 
+    IMAGE_VERSION = '0.0.2' 
     IMAGE_REPO = 'devops_training_java_app' 
     IMAGE_NAME = "${IMAGE_REPO}:${IMAGE_VERSION}"
     APP_URL = 'http://localhost:8084/hello'
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
-    VERSION_JAR = '1.0.8-SNAPSHOT'
+    VERSION_JAR = "${env.IMAGE_VERSION}-SNAPSHOT"
+   
+    // [E5] TODO: define repositorio local de imagen.
+    IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
+    env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
 
     // - (opcional E7) REGISTRY y REGISTRY_CREDS_ID
     // [E7] TODO: define host/repo de registry y credencial Jenkins.
@@ -55,8 +59,7 @@ pipeline {
     REGISTRY_HOST = 'local-registry:5000'
     REGISTRY_REPO = 'scalian_training-java-hello-world'
     REGISTRY_CREDS_ID = 'local-registry-creds'
-    TAG_NAME="1.0.4-SNAPSHOT"
-    IMAGE_REGISTRY = "${REGISTRY_HOST}/${REGISTRY_REPO}:${TAG_NAME}"
+    IMAGE_REGISTRY = "${REGISTRY_HOST}/${REGISTRY_REPO}:${IMAGE_VERSION}"
 
   }
 
