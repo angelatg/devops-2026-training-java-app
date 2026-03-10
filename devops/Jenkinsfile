@@ -51,7 +51,7 @@ pipeline {
    
     // [E5] TODO: define repositorio local de imagen.
     IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
-    env.IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
+    IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
 
     // - (opcional E7) REGISTRY y REGISTRY_CREDS_ID
     // [E7] TODO: define host/repo de registry y credencial Jenkins.
