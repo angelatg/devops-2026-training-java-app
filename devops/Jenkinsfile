@@ -150,13 +150,13 @@ pipeline {
                 docker tag ${env.IMAGE_LOCAL} ${IMAGE_REGISTRY}
                 docker push ${IMAGE_REGISTRY}
 
-                // Comprobar los repositorios publicados
+                # Comprobar los repositorios publicados
                 curl -s http://localhost:5000/v2/_catalog"
 
-                // Comprobar tags de imagen
+                # Comprobar tags de imagen
                 curl -s http://localhost:5000/v2/${env.IMAGE_LOCAL}/tags/list
 
-                // Validación final de comsumo
+                # Validación final de comsumo
                 docker pull localhost:5000/${env.IMAGE_LOCAL}
               """
              }
