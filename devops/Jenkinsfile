@@ -42,7 +42,7 @@ pipeline {
     // - APP_URL (endpoint para e2e)
     // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
    
-    IMAGE_VERSION = '0.0.3' 
+    IMAGE_VERSION = '0.0.2' 
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
     APP_URL = 'http://localhost:8084/hello'
     VERSION_JAR = "${env.IMAGE_VERSION}-SNAPSHOT"
@@ -144,20 +144,18 @@ pipeline {
           //   '''
           // }
 
+          //obtener credencial (usuario/password) creada en la administración de jenkins
           withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "REG_USER", passwordVariable: "REG_PASS")]) {
              sh """
+                # hacer login en el registro con las credenciales obtenidas de jenkins
                 echo "\$REG_PASS" | docker login ${env.REGISTRY_HOST} -u "\${REG_USER}" --password-stdin
+                
+                # tag la imagen con el hostname y el puerto del registro
                 docker tag ${env.IMAGE_LOCAL} ${IMAGE_REGISTRY}
+                
+                # subir la imagen al registro
                 docker push ${IMAGE_REGISTRY}
-
-                # Comprobar los repositorios publicados
-                curl -s http://localhost:5000/v2/_catalog
-
-                # Comprobar tags de imagen
-                curl -s http://localhost:5000/v2/${env.IMAGE_REPO_LOCAL}/tags/list
-
-                # Validación final de comsumo
-                docker pull localhost:5000/${env.IMAGE_LOCAL}
+       
               """
              }
         }
@@ -233,6 +231,9 @@ pipeline {
      
       // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
+
+      // borrar imagen tageada para subir al registro
+      sh "docker rmi ${env.IMAGE_REGISTRY} || true"
     }
   }
 }
