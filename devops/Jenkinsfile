@@ -214,6 +214,9 @@ pipeline {
      
       // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
+
+      // borrar imagen ci-build-tools
+      sh "docker rmi ${CI_IMAGE_NAME} || true"
     }
   }
 }
