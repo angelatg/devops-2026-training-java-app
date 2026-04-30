@@ -138,8 +138,13 @@ pipeline {
        
               """
              }
-              
         }
+      }
+      post{
+          always{
+              // borrar imagen tageada para subir al registro
+              sh "docker rmi ${IMAGE_REGISTRY} || true"
+          }
       }
 
     }
@@ -191,9 +196,6 @@ pipeline {
         always {
           // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
-          
-           // nombre de imagen en docker-compose-yml
-           sh "docker rmi scalian_training-java-hello-world:0.0.2 || true"
         }
         success {
           echo 'SUCCESS'
@@ -213,8 +215,6 @@ pipeline {
       // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
 
-      // borrar imagen tageada para subir al registro
-      sh "docker rmi ${IMAGE_REGISTRY} || true"
     }
   }
 }
