@@ -117,7 +117,7 @@ pipeline {
     // =========================
     // Ejercicio 7 (opcional): push a registry privado
     // =========================
-    stage('CI - Push image (opcional)') {
+    stage('CI - Push image') {
       when {
         // TODO (E7): Ejecuta solo si has añadido un parámetro tipo ENABLE_REGISTRY_PUSH
         expression { return params.ENABLE_REGISTRY_PUSH }
@@ -140,10 +140,7 @@ pipeline {
        
               """
              }
-              //comprobar resultados
-              sh "curl -s http://localhost:5000/v2/_catalog"
-              sh "curl -s http://localhost:5000/v2/scalian_training-java-hello-world/tags/list"
-              sh "docker pull localhost:5000/scalian_training-java-hello-world:0.0.2"
+              
         }
       }
 
