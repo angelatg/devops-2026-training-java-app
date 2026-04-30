@@ -1,9 +1,6 @@
 /*
-  Practica 2 - Jenkinsfile dummy (PUNTO DE PARTIDA)
+  Practica 2 - Jenkinsfile 
 
-  Este Jenkinsfile es intencionalmente simple. En la Practica 2 iras anadiendo
-  piezas (stages, agents, funciones Groovy, Docker build, docker compose, etc.)
-  hasta construir un pipeline CI/CD completo.
 */
 
 // =========================
@@ -11,9 +8,9 @@
 // =========================
 def runInDocker(String image, Closure body) {
   // TODO (E4): Ejecuta `body()` dentro del contenedor indicado usando Docker Pipeline:
-  // docker.image(image).inside { body() }
   docker.image(image).inside { body() }
 }
+
 
 pipeline {
   agent any
@@ -24,6 +21,10 @@ pipeline {
   parameters {
     // TODO (E6.3): Añade un booleanParam RUN_CD (default false) para habilitar CD.
     booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
+
+    // [E7] TODO: añade parámetro para push al registry.
+    booleanParam(name: 'ENABLE_REGISTRY_PUSH', defaultValue: false, description: 'Publicar imagen en local-registry')
+
   }
 
 
@@ -32,23 +33,32 @@ pipeline {
   // =========================
   environment {
     // TODO (E6.4): Define variables reutilizables:
-    // - IMAGE_NAME (tag para docker build)
-    // - IMAGE_VERSION (versión para docker build)
-    // - APP_URL (endpoint para e2e)
-    // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
-      
-    IMAGE_NAME = 'devops_training_java_app'
-    IMAGE_VERSION = '0.0.1'
-    APP_URL = 'http://localhost:8084/hello'
+    
+    IMAGE_VERSION = '0.0.2' 
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
-  }
+    APP_URL = 'http://localhost:8084/hello'
+    VERSION_JAR = "${env.IMAGE_VERSION}-SNAPSHOT"
+   
+    // [E5] TODO: define repositorio local de imagen.
+    IMAGE_REPO_LOCAL = 'scalian_training-java-hello-world'
+    IMAGE_LOCAL = "${env.IMAGE_REPO_LOCAL}:${env.IMAGE_VERSION}"
 
+    // - (opcional E7) REGISTRY y REGISTRY_CREDS_ID
+    // [E7] TODO: define host/repo de registry y credencial Jenkins.
+    REGISTRY_HOST = 'local-registry:5000'
+    REGISTRY_REPO = 'scalian_training-java-hello-world'
+    REGISTRY_CREDS_ID = 'local-registry-creds'
+    IMAGE_REGISTRY = "${REGISTRY_HOST}/${REGISTRY_REPO}:${IMAGE_VERSION}"
+
+
+
+  }
 
 
   // =========================
   // Ejercicio 1 (estructura básica)
   // =========================
-  stages {
+  stages {  
     stage('Info') {
       steps {
         // TODO (E1): imprime JOB_NAME y BUILD_NUMBER
@@ -64,9 +74,6 @@ pipeline {
       steps {
         script {
           // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
-          // Ejemplo:
-          // env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
-          // docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
           docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
         }
       }
@@ -87,7 +94,6 @@ pipeline {
       steps {
          script{
           // TODO (E3/E4): Ejecuta `make lint` dentro de la imagen CI construida.
-          // runInDocker(env.CI_IMAGE_NAME) { sh 'make lint' }
           runInDocker(env.CI_IMAGE_NAME) { sh 'make test' }
          }
       }
@@ -100,13 +106,47 @@ pipeline {
       steps {
         script {
           // TODO (E5): Construye la imagen Docker usando el Dockerfile del repo:
-          // docker.build(env.IMAGE_NAME, "--build-arg VERSION=... -f devops/Dockerfile .")
-      
-          docker.build(env.IMAGE_NAME, "--build-arg VERSION=${env.IMAGE_VERSION} -f devops/Dockerfile .")
+          docker.build(env.IMAGE_LOCAL, "--build-arg VERSION=${env.VERSION_JAR} -f devops/Dockerfile .")
         }
       }
     }
 
+
+    // =========================
+    // Ejercicio 7 (opcional): push a registry privado
+    // =========================
+    stage('CI - Push image') {
+      when {
+        // TODO (E7): Ejecuta solo si has añadido un parámetro tipo ENABLE_REGISTRY_PUSH
+        expression { return params.ENABLE_REGISTRY_PUSH }
+      }
+      steps {
+        script {
+          // TODO (E7): Taggea y pushea la imagen a local-registry:5000 usando credenciales Jenkins.
+          //login + tag + push al registry.
+           //obtener credencial (usuario/password) creada en la administración de jenkins
+          withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "REG_USER", passwordVariable: "REG_PASS")]) {
+             sh """
+                # hacer login en el registro con las credenciales obtenidas de jenkins
+                echo "\$REG_PASS" | docker login ${env.REGISTRY_HOST} -u "\${REG_USER}" --password-stdin
+                
+                # tag la imagen con el hostname y el puerto del registro
+                docker tag ${env.IMAGE_LOCAL} ${IMAGE_REGISTRY}
+                
+                # subir la imagen al registro
+                docker push ${IMAGE_REGISTRY}
+       
+              """
+             }
+              
+        }
+      }
+
+    }
+
+    // =========================
+    // Ejercicio 6 (compose) + Ejercicio 6.1 (solo develop/master) + Ejercicio 6.3 (RUN_CD)
+    // =========================
      stage('CD') {
       when {
         anyOf {
@@ -145,12 +185,36 @@ pipeline {
         }
       }
       post{
+        // =========================
+        // Ejercicio 6.5 (hooks post)
+        // =========================
         always {
-           sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes"
+          // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
+           sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
+          
+           // nombre de imagen en docker-compose-yml
+           sh "docker rmi scalian_training-java-hello-world:0.0.2 || true"
         }
-        
-      }
+        success {
+          echo 'SUCCESS'
+        }
+        failure {
+          echo 'FAILURE'
+          sh "docker compose -p ${env.COMPOSE_PROJECT} logs || true"
+        }
+       }
      }
-    
+  }
+  post{
+    always{
+      //borrar imagen de docker build
+      sh "docker rmi ${env.IMAGE_LOCAL} || true" 
+     
+      // borrar imagen de ci-lint y ci-test
+      sh "docker rmi ${env.CI_IMAGE_NAME} || true"
+
+      // borrar imagen tageada para subir al registro
+      sh "docker rmi ${IMAGE_REGISTRY} || true"
+    }
   }
 }
