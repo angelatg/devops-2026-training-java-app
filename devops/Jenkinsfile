@@ -28,7 +28,7 @@ pipeline {
     booleanParam(name: 'ENABLE_REGISTRY_PUSH', defaultValue: false, description: 'Publicar imagen en local-registry')
 
     // [E7/E12] TODO: añade parámetro para forzar uso de imagen del registry en CD.
-    // booleanParam(name: 'USE_REGISTRY_IMAGE_IN_CD', defaultValue: true, description: 'Usar imagen del registry en CD')
+    booleanParam(name: 'USE_REGISTRY_IMAGE_IN_CD', defaultValue: true, description: 'Usar imagen del registry en CD')
   }
 
 
