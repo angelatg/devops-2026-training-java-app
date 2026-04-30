@@ -214,9 +214,6 @@ pipeline {
      
       // borrar imagen de ci-lint y ci-test
       sh "docker rmi ${env.CI_IMAGE_NAME} || true"
-
-      // borrar imagen tageada para subir al registro
-      sh "docker rmi ${IMAGE_REGISTRY} || true"
     }
   }
 }
