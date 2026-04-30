@@ -1,9 +1,6 @@
 /*
-  Practica 2 - Jenkinsfile dummy (PUNTO DE PARTIDA)
+  Practica 2 - Jenkinsfile 
 
-  Este Jenkinsfile es intencionalmente simple. En la Practica 2 iras anadiendo
-  piezas (stages, agents, funciones Groovy, Docker build, docker compose, etc.)
-  hasta construir un pipeline CI/CD completo.
 */
 
 // =========================
@@ -13,6 +10,7 @@ def runInDocker(String image, Closure body) {
   // TODO (E4): Ejecuta `body()` dentro del contenedor indicado usando Docker Pipeline:
   docker.image(image).inside { body() }
 }
+
 
 pipeline {
   agent any
@@ -37,11 +35,7 @@ pipeline {
   // =========================
   environment {
     // TODO (E6.4): Define variables reutilizables:
-    // - IMAGE_NAME (tag para docker build)
-    // - IMAGE_VERSION (versión para docker build)
-    // - APP_URL (endpoint para e2e)
-    // - CI_IMAGE_NAME (imagen construida desde devops/ci.Dockerfile para usar `make`)
-   
+    
     IMAGE_VERSION = '0.0.2' 
     CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
     APP_URL = 'http://localhost:8084/hello'
@@ -58,8 +52,9 @@ pipeline {
     REGISTRY_CREDS_ID = 'local-registry-creds'
     IMAGE_REGISTRY = "${REGISTRY_HOST}/${REGISTRY_REPO}:${IMAGE_VERSION}"
 
-  }
 
+
+  }
 
 
   // =========================
@@ -81,9 +76,6 @@ pipeline {
       steps {
         script {
           // TODO (E3): Construye una imagen de CI desde devops/ci.Dockerfile.
-          // Ejemplo:
-          // env.CI_IMAGE_NAME = "java-ci-tools:${env.BUILD_NUMBER}"
-          // docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
           docker.build(env.CI_IMAGE_NAME, "-f devops/ci.Dockerfile .")
         }
       }
@@ -127,24 +119,14 @@ pipeline {
     // =========================
     stage('CI - Push image (opcional)') {
       when {
-        // [E7] TODO: ejecuta solo si se habilita el parámetro.
         // TODO (E7): Ejecuta solo si has añadido un parámetro tipo ENABLE_REGISTRY_PUSH
         expression { return params.ENABLE_REGISTRY_PUSH }
       }
       steps {
         script {
           // TODO (E7): Taggea y pushea la imagen a local-registry:5000 usando credenciales Jenkins.
-          // [E7] TODO: login + tag + push al registry.
-          // Ejemplo:
-          // withCredentials([usernamePassword(...)]) {
-          //   sh '''
-          //     echo "$REG_PASS" | docker login ...
-          //     docker tag "$IMAGE_LOCAL" "$IMAGE_REGISTRY"
-          //     docker push "$IMAGE_REGISTRY"
-          //   '''
-          // }
-
-          //obtener credencial (usuario/password) creada en la administración de jenkins
+          //login + tag + push al registry.
+           //obtener credencial (usuario/password) creada en la administración de jenkins
           withCredentials([usernamePassword(credentialsId: 'local-registry-creds',usernameVariable: "REG_USER", passwordVariable: "REG_PASS")]) {
              sh """
                 # hacer login en el registro con las credenciales obtenidas de jenkins
@@ -158,8 +140,13 @@ pipeline {
        
               """
              }
+              //comprobar resultados
+              sh "curl -s http://localhost:5000/v2/_catalog"
+              sh "curl -s http://localhost:5000/v2/scalian_training-java-hello-world/tags/list"
+              sh "docker pull localhost:5000/scalian_training-java-hello-world:0.0.2"
         }
       }
+
     }
 
     // =========================
