@@ -138,9 +138,14 @@ pipeline {
        
               """
              }
-              
         }
       }
+       post{
+          always{
+          // borrar imagen tageada para subir al registro
+          sh "docker rmi ${IMAGE_REGISTRY} || true"
+        s}
+  }
 
     }
 
