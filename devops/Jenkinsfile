@@ -191,9 +191,6 @@ pipeline {
         always {
           // Limpieza: esto debe ejecutarse tanto si falla como si va bien.
            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
-          
-           // nombre de imagen en docker-compose-yml
-           sh "docker rmi ${IMAGE_LOCAL} || true"
         }
         success {
           echo 'SUCCESS'
